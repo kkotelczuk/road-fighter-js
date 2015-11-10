@@ -1,102 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/styles/style.css">
-    <script src="scripts/main.js"></script>
-    <title>Road Fighter</title>
+    <title></title>
 </head>
-<body >
-<canvas id="game-board" width="300" height="500" ></canvas>
-<script>
-    var canvas = document.getElementById("game-board");
-    var ctx = document.getElementById('game-board').getContext('2d');
-    var offset = 2;
-    var offset_mulipler = 2;
-    var leftPressed = false;
-    var rightPressed = false;
-    var upPressed = false;
-    var downPressed = false;
-    var x = 134;
-
-    document.addEventListener("keydown", keyDownHandler, false);
-    document.addEventListener("keyup", keyUpHandler, false);
-
-    function keyDownHandler(e) {
-        console.log(e.keyCode);
-        if(e.keyCode == 39) {
-            rightPressed = true;
-        }
-        else if(e.keyCode == 37) {
-            leftPressed = true;
-        }
-        if(e.keyCode == 38) {
-            upPressed = true;
-        }
-        else if(e.keyCode == 40) {
-            downPressed = true;
-        }
-    }
-    function keyUpHandler(e) {
-        if(e.keyCode == 39) {
-            rightPressed = false;
-        }
-        else if(e.keyCode == 37) {
-            leftPressed = false;
-        }
-        if(e.keyCode == 38) {
-            upPressed = false;
-        }
-        else if(e.keyCode == 40) {
-            downPressed = false;
-        }
-    }
-
-    function draw() {
-
-        ctx.clearRect(0,0, canvas.width, canvas.height);
-        ctx.fillStyle="green";
-        ctx.fillRect(0,0,30,300);
-        ctx.fillStyle="black";
-        ctx.fillRect(32,0,100,300);
-        ctx.fillStyle="green";
-        ctx.fillRect(x,0,30,300);
-        ctx.setLineDash([6, 10]);
-        ctx.lineDashOffset = -offset*offset_mulipler;
-        ctx.moveTo(80,0);
-        ctx.lineTo(80,300);
-        ctx.strokeStyle="white";
-        ctx.stroke();
-
-        if(upPressed) {
-            offset_mulipler = 5;
-        }
-        else if(downPressed) {
-            offset_mulipler = 1;
-        }else{
-            offset_mulipler = 2;
-        }
-
-        if(rightPressed){
-           x = 150;
-        }else{
-            x = 134;
-        }
-
-
-    }
-
-    function march() {
-        offset++;
-        if (offset > 30) {
-            offset = 2;
-        }
-        draw();
-        setTimeout(march, 20);
-    }
-
-    march();
-</script>
-
+<body onload="main();">
+<div>
+    <h2>Road fighter 2D</h2>
+</div>
+<canvas id="gameBoard" width="350" height="500"></canvas>
 </body>
+<script src="script/engine.js"></script>
+<script src="script/board.js"></script>
+<script src="script/car.js"></script>
+<script src="script/steering.js"></script>
+<script src="script/game.js"></script>
 </html>
