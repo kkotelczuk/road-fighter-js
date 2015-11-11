@@ -39,5 +39,8 @@ function Board(width, height) {
         divider: '#f7f7f7'
     };
 
+    this.grassImg = new Image();
+    this.grassImg.src = 'img/grass.jpg';
+
     return this;
 }

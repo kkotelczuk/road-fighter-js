@@ -16,6 +16,8 @@ function Car(type) {
         this.turningFactor = 0.5;
         this.topSpeed = 25;
         this.accelerationFactor = 0.4;
+        this.accidentId = -1;
+        this.score = 0;
 
     } else if (type == 1) {
         this.model.src = 'img/bus.png';

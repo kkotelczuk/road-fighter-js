@@ -10,27 +10,39 @@ function RoadFighter(canvas, width, height, inputBuffer) {
     this.keysPressed = inputBuffer;
     this.shiftFrameFactor = 10;
     this.minimumShiftFrameFactor = this.shiftFrameFactor;
+    //this.grassPattern = this.canvas.createPattern(this.board.grassImg, 'no-repeat');
 
     this.player = new Car('player');
     this.player.xLocation =
-        this.board.grassWidth + (.5 * this.board.laneWidth) - parseInt(.5 * this.player.width) - this.board.stripsWidth;
+        parseInt(this.board.grassWidth + (.5 * this.board.laneWidth) - (.5 * this.player.width) - this.board.stripsWidth);
     this.player.yLocation =
-        this.player.defaultPosition = this.board.height - this.player.height * 2;
+        this.player.defaultPosition = parseInt(this.board.height - this.player.height * 2);
 
     this.cars = [];
     this.cars.push(this.player);
     this.gameOver = false;
+    var counter = 0;
 
     this.update = function () {
+
+
         if (!this.gameOver) {
             this.removeCars();
             this.addCars();
-            this.drawBoard();
-            this.drawStrips();
-            this.drawCars();
+        }
+        this.drawBoard();
+        this.drawStrips();
+        this.drawCars();
+        this.drawStats();
+        if (!this.gameOver) {
             this.carSteering();
             this.collisionsDetection();
+        }else{
+            this.carAccident();
+            this.drawDisplay();
         }
+
+
     };
 
     this.addCars = function () {
@@ -79,18 +91,28 @@ function RoadFighter(canvas, width, height, inputBuffer) {
     };
 
     this.drawCars = function () {
+
         for (var i = 0; i < this.cars.length; i++) {
 
             var car = this.cars[i];
 
-            this.canvas.drawImage(car.model, car.xLocation, car.yLocation);
-
-            this.canvas.rect(car.xLocation, car.yLocation, car.width, car.height);
-            this.canvas.stroke();
-
             if (i != 0) {
-                car.yLocation += (car.carSpeed + parseInt(this.shiftFrameFactor / 2)) * (car.carSpeedFactor );
+                car.yLocation += parseInt((car.carSpeed + parseInt(this.shiftFrameFactor / 2)) * (car.carSpeedFactor ));
             }
+
+            if (this.gameOver && (i == 0 || i == this.player.accidentId )) {
+                i == 0 ? car.xLocation += 5: car.xLocation -= 5;
+                this.canvas.save();
+                this.canvas.translate(car.xLocation, car.yLocation);
+                this.canvas.rotate(counter * Math.PI / 180);
+                this.canvas.drawImage(car.model, -(car.width / 2), -(car.height / 2));
+                this.canvas.restore();
+                counter += 25;
+            } else {
+                this.canvas.drawImage(car.model, car.xLocation, car.yLocation);
+            }
+
+
         }
     };
 
@@ -125,6 +147,22 @@ function RoadFighter(canvas, width, height, inputBuffer) {
         this.canvas.stroke();
     };
 
+    this.drawStats = function(){
+        this.canvas.font = "15px Arial";
+        this.canvas.fillText(parseInt(this.shiftFrameFactor)*10+" km/h", 10, this.board.height-10);
+    };
+
+    this.drawDisplay = function(){
+        this.canvas.fillStyle = "rgba(73, 73, 73, 0.65)";
+        this.canvas.fillRect(0, 0, this.board.width, this.board.height);
+        this.canvas.beginPath();
+        this.canvas.font = "bold 40px Arial";
+        this.canvas.fillStyle = "red";
+        this.canvas.textAlign = "center";
+        this.canvas.fillText("Game Over", this.board.width/2, this.board.height/2);
+        this.canvas.fillText("Score: "+this.player.score, this.board.width/2, this.board.height/2+40);
+    };
+
     this.carSteering = function () {
         if (this.keysPressed.up) {
             this.player.yLocation -= parseInt(this.shiftFrameFactor * this.player.accelerationFactor);
@@ -155,15 +193,30 @@ function RoadFighter(canvas, width, height, inputBuffer) {
         }
 
     };
+    this.carAccident = function(){
+        if (this.shiftFrameFactor > this.minimumShiftFrameFactor) {
+            this.shiftFrameFactor -= this.player.accelerationFactor * 0.5;
+        } else {
+            this.shiftFrameFactor = this.minimumShiftFrameFactor;
+        }
+    };
     this.collisionsDetection = function () {
 
         for (var i = 1; i < this.cars.length; i++) {
             var car = this.cars[i];
-            if((this.player.yLocation <= (car.yLocation - car.height)) &&
-                (this.player.xLocation)){
-                this.gameOver = true;
-            }
 
+            if (car.yLocation > 0 && car.yLocation < this.board.height) {
+                if (car.xLocation <= this.player.xLocation + this.player.width &&
+                    car.xLocation + car.width >= this.player.xLocation &&
+                    car.yLocation <= this.player.yLocation + this.player.height &&
+                    car.height + car.yLocation >= this.player.yLocation) {
+                    this.gameOver = true;
+                    this.player.accidentId = i;
+                    var button = document.getElementById('again');
+                    button.style.display = 'block';
+                    button.style.zIndex = 2;
+                }
+            }
 
         }
 
@@ -181,6 +234,8 @@ function RoadFighter(canvas, width, height, inputBuffer) {
         if (this.player.xLocation >= this.board.rightShoulder - this.player.width) {
             this.player.xLocation = this.board.rightShoulder - this.player.width;
         }
+
+        this.player.score += parseInt(this.shiftFrameFactor / 12.5);
     };
 
 }
