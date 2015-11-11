@@ -1,68 +1,41 @@
 /**
  * Created by Konrad on 15.10.2015.
  */
-function Car(type){
+function Car(type) {
     this.model = new Image();
-    if(type == 'player'){
+    this.xLocation = 0;
+    this.yLocation = 0;
+    this.carSpeedFactor = 0.8;
+    this.carSpeed = 3;
+
+    if (type == 'player') {
         this.model.src = 'img/player.png';
-        this.default_car_padding = {
-            left : 20,
-            bottom : 67
-        };
-        this.car_padding_from_b = 10;	//left and right padding of car from road margins
-        this.car_l_r_turn_factor = 10;	//left and right turn factor of car
-        this.max_car_inertia = 10;	//maximum inertia of car
-        this.max_car_width = 41;	//width of car graphics being displayed on game
-        this.startPositionY = this.default_car_padding.bottom;
+        this.width = 41;
+        this.height = 67;
+        this.defaultPosition = 0;
+        this.turningFactor = 0.5;
+        this.topSpeed = 25;
+        this.accelerationFactor = 0.4;
 
-
-    }else if(type == 'bus'){
+    } else if (type == 1) {
         this.model.src = 'img/bus.png';
-        this.default_car_padding = {
-            left : 20,
-            bottom : 120
-        };
-        this.car_padding_from_b = 10;	//left and right padding of car from road margins
-        this.car_l_r_turn_factor = 10;	//left and right turn factor of car
-        this.max_car_inertia = 10;	//maximum inertia of car
-        this.max_car_width = 53;	//width of car graphics being displayed on game
-        this.startPositionY = this.default_car_padding.bottom;
+        this.width = 53;
+        this.height = 120;
 
-    }else if(type == 'car1'){
+    } else if (type == 2) {
         this.model.src = 'img/car1.png';
-        this.default_car_padding = {
-            left : 20,
-            bottom : 66
-        };
-        this.car_padding_from_b = 10;	//left and right padding of car from road margins
-        this.car_l_r_turn_factor = 20;	//left and right turn factor of car
-        this.max_car_inertia = 30;	//maximum inertia of car
-        this.max_car_width = 37;	//width of car graphics being displayed on game
-        this.startPositionY = this.default_car_padding.bottom;
+        this.width = 37;
+        this.height = 66;
 
-    }else if(type == 'car2'){
+    } else if (type == 3) {
         this.model.src = 'img/car2.png';
-        this.default_car_padding = {
-            left : 20,
-            bottom : 51
-        };
-        this.car_padding_from_b = 10;	//left and right padding of car from road margins
-        this.car_l_r_turn_factor = 10;	//left and right turn factor of car
-        this.max_car_inertia = 10;	//maximum inertia of car
-        this.max_car_width = 36;	//width of car graphics being displayed on game
-        this.startPositionY = this.default_car_padding.bottom;
+        this.width = 36;
+        this.height = 51;
 
-    }else if(type == 'car3'){
+    } else if (type == 4) {
         this.model.src = 'img/car3.png';
-        this.default_car_padding = {
-            left : 20,
-            bottom : 107
-        };
-        this.car_padding_from_b = 10;	//left and right padding of car from road margins
-        this.car_l_r_turn_factor = 10;	//left and right turn factor of car
-        this.max_car_inertia = 10;	//maximum inertia of car
-        this.max_car_width = 47;	//width of car graphics being displayed on game
-        this.startPositionY = this.default_car_padding.bottom;
+        this.width = 47;
+        this.height = 107;
 
     }
     return this;

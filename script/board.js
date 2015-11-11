@@ -3,23 +3,36 @@
  */
 function Board(width, height) {
 
-    this.roadWidth = 190;
-    this.grassWidth = (width - this.roadWidth)/2;
-    this.rightShoulder = this.roadWidth + this.grassWidth;
-    this.laneWidth = 60;
-    this.stripsWidth = 5;
-    this.leftLane = this.grassWidth + this.laneWidth;
-    this.rightLane  = this.leftLane + this.laneWidth + this.stripsWidth;
     this.width = width;
     this.height = height;
-    this.stripsDy = 0;
 
-    this.middleRoadPoint = width/2;	//mid-width point of road, also this is the mid-width of game screen point
-    this.quartOfTheRoad = (width /3);	//half of the width of road
-    this.shiftFrameFactor = 15;	//shift the game frame by this factor
-    this.lanesWidth = 5;	//width of divider
-    this.lanesHeight = 15;	//height of divider
-    this.lanesDistance = 40;	//distance between two dividers (height)
+    this.roadWidth = 190;
+    this.laneWidth = 60;
+    this.stripsWidth = 5;
+    this.stripsDy = 0;
+    this.stripsHeight = 15;
+    this.stripsDistance = 40;
+    this.topEdgeOfRoad = 15;
+
+    this.grassWidth = (this.width - this.roadWidth) / 2;
+    this.rightShoulder = this.roadWidth + this.grassWidth;
+    this.leftLane = this.grassWidth + this.laneWidth;
+    this.rightLane = this.leftLane + this.laneWidth + this.stripsWidth;
+
+    this.carStartingPositionX1 =
+        this.grassWidth + (.5 * this.laneWidth) - this.stripsWidth;
+    this.carStartingPositionX2 =
+        this.grassWidth + (.5 * this.laneWidth) + this.laneWidth;
+    this.carStartingPositionX3 =
+        this.grassWidth + (.5 * this.laneWidth) + (2 * this.stripsWidth) + (2 * this.laneWidth);
+
+    this.busyLane = {
+        left: 0,
+        middle: 0,
+        right: 0
+    };
+
+
     this.colors = {
         grass: '#0B610B',
         road: '#333333',

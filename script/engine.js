@@ -5,43 +5,111 @@
 
 function RoadFighter(canvas, width, height, inputBuffer) {
 
-    this.gameStarted = true;
-
     this.board = new Board(width, height);
     this.canvas = canvas;
     this.keysPressed = inputBuffer;
+    this.shiftFrameFactor = 10;
+    this.minimumShiftFrameFactor = this.shiftFrameFactor;
 
     this.player = new Car('player');
+    this.player.xLocation =
+        this.board.grassWidth + (.5 * this.board.laneWidth) - parseInt(.5 * this.player.width) - this.board.stripsWidth;
+    this.player.yLocation =
+        this.player.defaultPosition = this.board.height - this.player.height * 2;
 
-    this.carLocation = {
-        X : (this.board.middleRoadPoint - this.board.quartOfTheRoad + this.player.default_car_padding.left),
-        Y : (this.board.height - this.player.default_car_padding.bottom)
-    };
-
-    this.player.startPositionY = this.carLocation.Y;
-
-    this.inertia = 0;
+    this.cars = [];
+    this.cars.push(this.player);
+    this.gameOver = false;
 
     this.update = function () {
-        this.drawBoard();
-        this.drawStrips();
-
-        this.canvas.drawImage(this.player.model, this.carLocation.X, this.carLocation.Y);
-
-        this.processInput();
-    };
-
-    this.drawStrips = function(){
-        this.canvas.fillStyle = this.board.colors.divider;
-        for (var i= this.board.stripsDy; i< this.board.height; i+=(this.board.lanesHeight+this.board.lanesDistance)) {
-            this.canvas.fillRect( this.board.leftLane - (this.board.lanesWidth * .5), i, this.board.lanesWidth, this.board.lanesHeight);
-            this.canvas.fillRect( this.board.rightLane - (this.board.lanesWidth * .5), i, this.board.lanesWidth, this.board.lanesHeight);
+        if (!this.gameOver) {
+            this.removeCars();
+            this.addCars();
+            this.drawBoard();
+            this.drawStrips();
+            this.drawCars();
+            this.carSteering();
+            this.collisionsDetection();
         }
-        this.board.stripsDy = (this.board.stripsDy+this.board.shiftFrameFactor)%(this.board.lanesHeight+this.board.lanesDistance);
-        console.log(this.board.stripsDy)
     };
 
-    this.drawBoard = function(){
+    this.addCars = function () {
+        if (this.cars.length <= 100) {
+
+            var rand = Math.floor((Math.random() * 4) + 1);
+            var newCar = new Car(rand);
+
+            if (this.cars.length <= 80) {
+                rand = Math.floor((Math.random() * 3) + 2);
+            }
+            else {
+                rand = Math.floor((Math.random() * 3) + 1);
+            }
+
+            if (rand == 1) {
+                newCar.yLocation = -(newCar.height + this.board.busyLane.left);
+                newCar.xLocation = this.board.carStartingPositionX1 - parseInt(.5 * newCar.width);
+                this.board.busyLane.left += newCar.height + Math.floor((Math.random() * 200) + 50);
+                newCar.carSpeedFactor = 0.2;
+            } else if (rand == 2) {
+                newCar.yLocation = -(newCar.height + this.board.busyLane.middle);
+                newCar.xLocation = this.board.carStartingPositionX2 - parseInt(.5 * newCar.width);
+                this.board.busyLane.middle += newCar.height + Math.floor((Math.random() * 300) + 100);
+                newCar.carSpeedFactor = 0.6;
+            } else {
+                newCar.yLocation = -(newCar.height + this.board.busyLane.right);
+                newCar.xLocation = this.board.carStartingPositionX3 - parseInt(.5 * newCar.width);
+                this.board.busyLane.right += newCar.height + Math.floor((Math.random() * 400) + 150);
+            }
+
+            this.cars.push(newCar);
+
+        }
+    };
+
+    this.removeCars = function () {
+        if (this.cars.length > 100) {
+            for (var i = 1; i < this.cars.length; i++) {
+                var car = this.cars[i];
+                if (car.yLocation > (this.board.height + 200)) {
+                    this.cars.splice(i, 1);
+                }
+            }
+        }
+    };
+
+    this.drawCars = function () {
+        for (var i = 0; i < this.cars.length; i++) {
+
+            var car = this.cars[i];
+
+            this.canvas.drawImage(car.model, car.xLocation, car.yLocation);
+
+            this.canvas.rect(car.xLocation, car.yLocation, car.width, car.height);
+            this.canvas.stroke();
+
+            if (i != 0) {
+                car.yLocation += (car.carSpeed + parseInt(this.shiftFrameFactor / 2)) * (car.carSpeedFactor );
+            }
+        }
+    };
+
+    this.drawStrips = function () {
+        this.canvas.fillStyle = this.board.colors.divider;
+        for (var i = this.board.stripsDy;
+             i < this.board.height;
+             i += (this.board.stripsHeight + this.board.stripsDistance)
+        ) {
+            this.canvas.fillRect(this.board.leftLane - this.board.stripsWidth, i,
+                this.board.stripsWidth, this.board.stripsHeight);
+            this.canvas.fillRect(this.board.rightLane - this.board.stripsWidth, i,
+                this.board.stripsWidth, this.board.stripsHeight);
+        }
+        this.board.stripsDy = (this.board.stripsDy + this.shiftFrameFactor) %
+            (this.board.stripsHeight + this.board.stripsDistance);
+    };
+
+    this.drawBoard = function () {
         this.canvas.clearRect(0, 0, this.board.width, this.board.height);
         this.canvas.fillStyle = this.board.colors.grass;
         this.canvas.fillRect(0, 0, this.board.width, this.board.height);
@@ -57,68 +125,62 @@ function RoadFighter(canvas, width, height, inputBuffer) {
         this.canvas.stroke();
     };
 
-    this.processInput = function() {
-        this.idle = true;
-
-        if (this.keysPressed.left) {
-            this.idle = false;
-
-            if((this.inertia - 1) > 0){
-                this.inertia--;
-                this.carLocation.X = ((this.carLocation.X - this.player.car_l_r_turn_factor) > (this.board.middleRoadPoint - this.board.quartOfTheRoad + this.player.car_padding_from_b)) ? (this.carLocation.X - this.player.car_l_r_turn_factor) : this.carLocation.X;
-            }
-            else{
-                this.inertia = 0;
-            }
-        }
-
-        if (this.keysPressed.right) {
-            this.idle = false;
-
-            if((this.inertia - 1) > 0){
-                this.inertia--;
-                this.carLocation.X = ((this.carLocation.X + this.player.car_l_r_turn_factor) < (this.board.middleRoadPoint + this.board.quartOfTheRoad - this.player.car_padding_from_b - this.player.max_car_width)) ? (this.carLocation.X + this.player.car_l_r_turn_factor) : this.carLocation.X;
-            }
-            else{
-                this.inertia = 0;
-            }
-        }
-
+    this.carSteering = function () {
         if (this.keysPressed.up) {
-            this.carLocation.Y -= 4;
-            this.idle = false;
-            this.inertia = (this.inertia + 1) <= this.player.max_car_inertia ? (this.inertia + 1) : this.inertia;
+            this.player.yLocation -= parseInt(this.shiftFrameFactor * this.player.accelerationFactor);
+            if (this.shiftFrameFactor < this.player.topSpeed) {
+                this.shiftFrameFactor += this.player.accelerationFactor;
+            }
+        } else {
+            this.player.yLocation += parseInt(this.shiftFrameFactor / 4);
+            if (this.shiftFrameFactor > this.minimumShiftFrameFactor) {
+                this.shiftFrameFactor -= 0.2;
+            } else {
+                this.shiftFrameFactor = this.minimumShiftFrameFactor;
+            }
         }
-
         if (this.keysPressed.down) {
-            this.carLocation.Y +=3;
-            this.idle = false;
-            if((this.inertia - 1) > 0){
-                this.inertia  -= 3;
-
-                if (this.inertia < 0) {
-                    this.inertia = 1;
-                }
-            }
-            else{
-                this.inertia = 0;
+            this.player.yLocation += parseInt(this.shiftFrameFactor * this.player.accelerationFactor);
+            if (this.shiftFrameFactor > this.minimumShiftFrameFactor) {
+                this.shiftFrameFactor -= this.player.accelerationFactor * 0.5;
+            } else {
+                this.shiftFrameFactor = this.minimumShiftFrameFactor;
             }
         }
+        if (this.keysPressed.right) {
+            this.player.xLocation += this.player.turningFactor * this.shiftFrameFactor;
+        }
+        if (this.keysPressed.left) {
+            this.player.xLocation -= this.player.turningFactor * this.shiftFrameFactor;
+        }
 
-        if (this.carLocation.Y <= this.player.startPositionY && !this.keysPressed.up && !this.keysPressed.down && !this.keysPressed.left && !this.keysPressed.right) {
-            this.idle = false;
-            if(this.carLocation.Y >= this.board.h - this.player.default_car_padding.bottom){
-                this.carLocation.Y = this.board.h - this.player.default_car_padding.bottom;
-                this.inertia = (this.inertia - 1) >= 0 ? (this.inertia - 1) : 0;
-            }else{
-                console.log(this.inertia);
+    };
+    this.collisionsDetection = function () {
 
-                this.carLocation.Y +=1;
-
+        for (var i = 1; i < this.cars.length; i++) {
+            var car = this.cars[i];
+            if((this.player.yLocation <= (car.yLocation - car.height)) &&
+                (this.player.xLocation)){
+                this.gameOver = true;
             }
+
 
         }
 
+        if (this.player.yLocation <= this.board.topEdgeOfRoad) {
+            this.player.yLocation = this.board.topEdgeOfRoad;
+        }
+
+        if (this.player.yLocation >= this.player.defaultPosition) {
+            this.player.yLocation = this.player.defaultPosition;
+        }
+
+        if (this.player.xLocation <= this.board.grassWidth) {
+            this.player.xLocation = this.board.grassWidth;
+        }
+        if (this.player.xLocation >= this.board.rightShoulder - this.player.width) {
+            this.player.xLocation = this.board.rightShoulder - this.player.width;
+        }
     };
 
 }
