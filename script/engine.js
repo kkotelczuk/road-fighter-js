@@ -10,7 +10,7 @@ function RoadFighter(canvas, width, height, inputBuffer) {
     this.keysPressed = inputBuffer;
     this.shiftFrameFactor = 10;
     this.minimumShiftFrameFactor = this.shiftFrameFactor;
-    //this.grassPattern = this.canvas.createPattern(this.board.grassImg, 'no-repeat');
+
 
     this.player = new Car('player');
     this.player.xLocation =
@@ -19,6 +19,7 @@ function RoadFighter(canvas, width, height, inputBuffer) {
         this.player.defaultPosition = parseInt(this.board.height - this.player.height * 2);
 
     this.cars = [];
+    this.boardBackground = [];
     this.cars.push(this.player);
     this.gameOver = false;
     var counter = 0;
@@ -26,37 +27,36 @@ function RoadFighter(canvas, width, height, inputBuffer) {
     this.update = function () {
 
 
-        if (!this.gameOver) {
-            this.removeCars();
-            this.addCars();
-        }
-        this.drawBoard();
-        this.drawStrips();
-        this.drawCars();
-        this.drawStats();
-        if (!this.gameOver) {
-            this.carSteering();
-            this.collisionsDetection();
-        }else{
-            this.carAccident();
-            this.drawDisplay();
-        }
+        //if (!this.gameOver) {
+        //    this.removeCars();
+        //    this.addCars();
+        //}
+        //this.drawBoard();
+        //this.drawStrips();
+        //this.drawCars();
+        //this.drawStats();
+        //if (!this.gameOver) {
+        //    this.carSteering();
+        //    this.collisionsDetection();
+        //}else{
+        //    this.carAccident();
+        //    this.drawDisplay();
+        //}
+        this.addBoardObjects();
+        this.drawBoardObjects();
+
 
 
     };
 
     this.addCars = function () {
-        if (this.cars.length <= 100) {
+        if (this.cars.length <= 12) {
 
             var rand = Math.floor((Math.random() * 4) + 1);
             var newCar = new Car(rand);
 
-            if (this.cars.length <= 80) {
-                rand = Math.floor((Math.random() * 3) + 2);
-            }
-            else {
-                rand = Math.floor((Math.random() * 3) + 1);
-            }
+            rand = Math.floor((Math.random() * 3) + 1);
+
 
             if (rand == 1) {
                 newCar.yLocation = -(newCar.height + this.board.busyLane.left);
@@ -79,8 +79,40 @@ function RoadFighter(canvas, width, height, inputBuffer) {
         }
     };
 
+    this.addBoardObjects = function(){
+        var boardObject;
+        for(var i = 0; i <= this.board.width+320; i+= 320){
+            lastObjectHeight = 320;
+            if(640 < i <= 1200){
+                 boardObject = new BoardObject('road');
+            }else{
+                 boardObject = new BoardObject('grass');
+            }
+
+            this.boardBackground[i] = [];
+            for(var j = 0; j < this.board.height+320 ; j+= 320){
+                boardObject.xLocation = i;
+                boardObject.yLocation = j;
+                this.boardBackground[i][j] = boardObject;
+            }
+        }
+
+    };
+
+    this.drawBoardObjects = function(){
+        for (var i = 0; i < this.board.width+320; i+=320) {
+            lastObjectHeight = 320;
+            for(var j = 0; j < this.board.height+320; j+= 320){
+                var boardObject = this.boardBackground[i][j];
+                boardObject.yLocation -= (this.shiftFrameFactor / 2);
+                this.canvas.drawImage(boardObject.model, boardObject.xLocation, boardObject.yLocation);
+                console.log( boardObject.xLocation, boardObject.yLocation);
+            }
+        }
+    };
+
     this.removeCars = function () {
-        if (this.cars.length > 100) {
+        if (this.cars.length > 9) {
             for (var i = 1; i < this.cars.length; i++) {
                 var car = this.cars[i];
                 if (car.yLocation > (this.board.height + 200)) {
@@ -91,7 +123,6 @@ function RoadFighter(canvas, width, height, inputBuffer) {
     };
 
     this.drawCars = function () {
-
         for (var i = 0; i < this.cars.length; i++) {
 
             var car = this.cars[i];
@@ -117,11 +148,16 @@ function RoadFighter(canvas, width, height, inputBuffer) {
     };
 
     this.drawStrips = function () {
+
         this.canvas.fillStyle = this.board.colors.divider;
         for (var i = this.board.stripsDy;
              i < this.board.height;
              i += (this.board.stripsHeight + this.board.stripsDistance)
         ) {
+            this.canvas.fillRect(this.board.oppositeRightLane - this.board.stripsWidth, i,
+                this.board.stripsWidth, this.board.stripsHeight);
+            this.canvas.fillRect(this.board.oppositeLeftLane - this.board.stripsWidth, i,
+                this.board.stripsWidth, this.board.stripsHeight);
             this.canvas.fillRect(this.board.leftLane - this.board.stripsWidth, i,
                 this.board.stripsWidth, this.board.stripsHeight);
             this.canvas.fillRect(this.board.rightLane - this.board.stripsWidth, i,
@@ -133,10 +169,29 @@ function RoadFighter(canvas, width, height, inputBuffer) {
 
     this.drawBoard = function () {
         this.canvas.clearRect(0, 0, this.board.width, this.board.height);
-        this.canvas.fillStyle = this.board.colors.grass;
-        this.canvas.fillRect(0, 0, this.board.width, this.board.height);
+        //this.canvas.fillStyle = this.board.colors.grass;
+        //this.canvas.fillRect(0, 0, this.board.width, this.board.height);
+        this.grassPattern = this.canvas.createPattern(this.board.grassImg, 'repeat');
+        //for (var i = this.board.grassDy;
+        //     i < this.board.height;
+        //     i += 320
+        //) {
+        //    this.canvas.rect(0, i, 320, 320);
+        //    this.canvas.fillStyle=this.grassPattern;
+        //    this.canvas.fill();
+        //}
+        //this.board.grassDy = (this.board.grassDy + this.shiftFrameFactor) %
+        //    320;
+
+
+        this.canvas.rect(0, 0, this.board.width, this.board.height);
+            this.canvas.fillStyle=this.grassPattern;
+            this.canvas.fill();
+
         this.canvas.fillStyle = this.board.colors.road;
         this.canvas.fillRect(this.board.grassWidth, 0, this.board.roadWidth, this.board.height);
+        this.canvas.fillStyle = this.grassPattern;
+        this.canvas.fillRect(this.board.separatorXposition, 0, this.board.laneSeparator, this.board.height);
         this.canvas.beginPath();
         this.canvas.moveTo(this.board.grassWidth, 0);
         this.canvas.lineTo(this.board.grassWidth, this.board.height);
