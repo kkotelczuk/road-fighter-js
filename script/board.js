@@ -32,13 +32,22 @@ function Board(width, height) {
         this.grassWidth + (.5 * this.laneWidth) + this.laneWidth;
     this.carStartingPositionX3 =
         this.grassWidth + (.5 * this.laneWidth) + (2 * this.stripsWidth) + (2 * this.laneWidth);
+    this.carStartingPositionX4 =
+        this.grassWidth + (.5 * this.laneWidth) + (3 * this.stripsWidth) + (3 * this.laneWidth) + this.laneSeparator;
+    this.carStartingPositionX5 =
+        this.grassWidth + (.5 * this.laneWidth) + (4 * this.stripsWidth) + (4 * this.laneWidth) + this.laneSeparator;
+    this.carStartingPositionX6 =
+        this.grassWidth + (.5 * this.laneWidth) + (5 * this.stripsWidth) + (5 * this.laneWidth) + this.laneSeparator;
 
 
 
     this.busyLane = {
         left: 0,
         middle: 0,
-        right: 0
+        right: 0,
+        oppositeLeft: 0,
+        oppositeRight: 0,
+        oppositeMiddle: 0
     };
 
 

@@ -6,8 +6,30 @@
     <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 <body onload="main();">
+<div id="loadScreen"></div>
 <canvas id="gameBoard" width="1450" height="920"></canvas>
 <button id="again" onclick="location.reload()">Again!</button>
+
+<div id="speedCounter">
+    <div id="speedCounterBar"></div>
+    <span id="speedCounterLabel">Speed</span>
+</div>
+
+<div id="fuelCounter">
+    <div id="fuelCounterBar"></div>
+    <span id="fuelCounterLabel">Fuel</span>
+</div>
+
+<div id="highScoreContainer">
+    <div id="highScore">
+        0000
+    </div>
+</div>
+<div id="scoreContainer">
+    <div id="score">
+        0000
+    </div>
+</div>
 </body>
 <script src="script/engine.js"></script>
 <script src="script/board.js"></script>

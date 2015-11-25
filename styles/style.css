@@ -12,7 +12,7 @@ button{
     padding-left: 0;
     padding-right: 0;
     margin-left: auto;
-    margin-right: auto;
+    margin-right: 1035px;
     display: none;
     z-index: -2;
     width: 200px;
@@ -21,5 +21,83 @@ button{
     font-size: xx-large;
     font-weight: bolder;
     position: relative;
-    top: -315px;
+    top: -414px;
+}
+#highScoreContainer{
+    display: block;
+    position: absolute;
+    top: 60px;
+    right: 100px;
+    border: solid 4px white;
+    width: 140px;
+    height: 50px;
+}
+
+#scoreContainer{
+    display: block;
+    position: absolute;
+    top: 190px;
+    right: 100px;
+    border: solid 4px white;
+    width: 140px;
+    height: 50px;
+}
+#highScore{
+
+    color: red;
+    font-family: Serif;
+    font-weight: 500;
+    text-align: center;
+    font-size: xx-large;
+    padding: 6px;
+}
+#score{
+    color: deepskyblue;
+    font-family: Serif;
+    font-weight: 500;
+    text-align: center;
+    font-size: xx-large;
+    padding: 6px;
+}
+#fuelCounter{
+    display: block;
+    position: absolute;
+    top: 410px;
+    right: 60px;
+}
+#fuelCounterBar{
+    border: solid 4px white;
+    width: 90px;
+    height: 500px;
+}
+#speedCounter{
+    display: block;
+    position: absolute;
+    top: 410px;
+    right: 190px;
+
+}
+#speedCounterBar{
+    width: 90px;
+    height: 500px;
+    border: solid 4px white;
+}
+#loadScreen{
+    width : 100%;
+    height : 100%;
+    display: block;
+}
+
+#speedCounterLabel{
+    color: white;
+    display: block;
+    position: relative;
+    text-align: center;
+}
+
+#fuelCounterLabel{
+    color: white;
+    display: block;
+    position: relative;
+    text-align: center;
 }
