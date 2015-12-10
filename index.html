@@ -8,26 +8,31 @@
 <body onload="main();">
 <div id="loadScreen"></div>
 <canvas id="gameBoard" width="1450" height="920"></canvas>
-<button id="again" onclick="location.reload()">Again!</button>
+<button id="again" onclick="restart()">Again!</button>
 
 <div id="speedCounter">
-    <div id="speedCounterBar"></div>
+    <div id="speedCounterBar">
+        <div id="speedCounterLevel"></div>
+    </div>
     <span id="speedCounterLabel">Speed</span>
 </div>
 
 <div id="fuelCounter">
-    <div id="fuelCounterBar"></div>
+    <div id="fuelCounterBar">
+        <div id="fuelCounterLevel"></div>
+    </div>
     <span id="fuelCounterLabel">Fuel</span>
 </div>
 
 <div id="highScoreContainer">
     <div id="highScore">
-        0000
+        0
     </div>
 </div>
+Score:
 <div id="scoreContainer">
     <div id="score">
-        0000
+        0
     </div>
 </div>
 </body>

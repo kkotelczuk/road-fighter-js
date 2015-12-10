@@ -18,6 +18,8 @@ function Car(type) {
         this.accelerationFactor = 0.4;
         this.accidentId = -1;
         this.score = 0;
+        this.distance = 0;
+        this.maxDistance = 100000;
 
     } else if (type == 1) {
         this.model.src = 'img/bus.png';

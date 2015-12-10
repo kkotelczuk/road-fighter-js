@@ -21,10 +21,20 @@ function Game() {
     game.ctx = game.context.getContext('2d');
     roadFighter = new RoadFighter(game.ctx, game.context.width, game.context.height, directions);
     setInterval("roadFighter.update()", game.framerate/game.fps);
+    localStorage.setItem("highScore", 0);
 }
 
 function main(){
     game = new Game();
+}
+
+function restart(){
+    game.context = document.getElementById('gameBoard');
+    game.ctx = game.context.getContext('2d');
+    roadFighter = new RoadFighter(game.ctx, game.context.width, game.context.height, directions);
+    var button = document.getElementById('again');
+    button.style.display = 'none';
+    button.style.zIndex = -2;
 }
 
 
