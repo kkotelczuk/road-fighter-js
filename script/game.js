@@ -21,7 +21,8 @@ function Game() {
     game.ctx = game.context.getContext('2d');
     roadFighter = new RoadFighter(game.ctx, game.context.width, game.context.height, directions);
     setInterval("roadFighter.update()", game.framerate/game.fps);
-    localStorage.setItem("highScore", 0);
+    document.getElementById("highScore").innerText = localStorage.getItem("highScore");
+    //localStorage.setItem("highScore", 0);
 }
 
 function main(){

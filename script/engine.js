@@ -67,9 +67,11 @@ function RoadFighter(canvas, width, height, inputBuffer) {
         var grd = this.canvas.createLinearGradient(0, 0, this.board.width, this.board.height);
         grd.addColorStop(0, "aqua");
         grd.addColorStop(1, "blue");
-        this.canvas.fillStyle = grd;
-        this.canvas.fillRect(0, 0, this.board.width, this.board.height);
-        this.canvas.beginPath();
+
+        t = this.canvas
+        t.fillStyle = grd;
+        t.fillRect(0, 0, this.board.width, this.board.height);
+        t.beginPath();
         this.canvas.font = "bold 170px Arial";
         this.canvas.fillStyle = "red";
         this.canvas.textAlign = "center";
@@ -285,7 +287,7 @@ function RoadFighter(canvas, width, height, inputBuffer) {
             = this.countersMappingValue(this.player.distance, 0, this.player.maxDistance, 0, 100)+'%';
 
         var scoreCounter = document.getElementById('score');
-        scoreCounter.innerHTML = this.player.score;
+        scoreCounter.innerText = this.player.score;
 
     };
 
@@ -376,14 +378,18 @@ function RoadFighter(canvas, width, height, inputBuffer) {
             this.player.xLocation = this.board.rightShoulder - this.player.width;
         }
 
-        if(this.player.xLocation <= this.board.separatorXposition){
-            this.scoreMultipler = 1.5;
-        }
-        if(this.player.xLocation >= this.board.separatorXposition || this.player.xLocation <= this.board.separatorXposition+this.board.laneSeparator){
+        if((this.player.xLocation + this.player.width) >= this.board.separatorXposition
+            && (this.player.xLocation) <= (this.board.separatorXposition+this.board.laneSeparator))
+        {
+            this.player.yLocation += parseInt(this.shiftFrameFactor * (this.player.accelerationFactor * 2));
+            if (this.shiftFrameFactor > this.minimumShiftFrameFactor) {
+                this.shiftFrameFactor -= 0.8;
+            } else {
+                this.shiftFrameFactor = this.minimumShiftFrameFactor;
+            }
             this.scoreMultipler = 0;
-        }
-        if(this.player.xLocation >= this.board.laneSeparator){
-            this.scoreMultipler = 1;
+        }else{
+            this.scoreMultipler = 0.8;
         }
 
 
@@ -401,8 +407,6 @@ function RoadFighter(canvas, width, height, inputBuffer) {
             button.style.display = 'block';
             button.style.zIndex = 2;
         }
-
-
     };
 
     this.setHighScore = function(){
@@ -411,7 +415,7 @@ function RoadFighter(canvas, width, height, inputBuffer) {
         if(parseInt(highScore) < this.player.score){
             localStorage.setItem("highScore", this.player.score);
         }
-        document.getElementById("highScore").innerHTML = localStorage.getItem("highScore");
+        document.getElementById("highScore").innerText = localStorage.getItem("highScore");
     }
 
 }
